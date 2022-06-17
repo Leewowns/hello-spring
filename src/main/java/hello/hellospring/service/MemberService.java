@@ -24,20 +24,20 @@ public class MemberService {
     * 회원 가입
     **/
     public long join(Member member){
-        // 같은 이름이 있는 중복 회원 X
-       /* Optional 1안
-        Optional<Member> result = memberRepository.findByName(member.getName());
-        result.ifPresent(m -> {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
-        });
-        */
 
-        // Optional 함수가 들어가 있어 코드가 안 이쁘다 그럼 Optional을 없애고 할 수 있다.
+        long start = System.currentTimeMillis();
+        
+        try{
+            validateDuplicateMember(member); // 중복 회원 검증
 
-        validateDuplicateMember(member); // 중복 회원 검증
-
-        memberRepository.save(member);
-        return member.getId();
+            memberRepository.save(member);
+            return member.getId();
+        }finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("join time = " + timeMs + "ms");
+        }
+       
     }
 
     private void validateDuplicateMember(Member member) {
@@ -46,6 +46,7 @@ public class MemberService {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         });
     }
+
     /*
     * 전체 회원 조회
     * */
